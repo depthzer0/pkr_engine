@@ -118,22 +118,17 @@ def abra3():
 
     return p, getKey(pS, mS)
 
-def abra2():
-    dd = {}; nilList = [0] * 52; x = 10000
-
-    dd = {crd: nilList[:] for crd in d}    
-    for _ in range(x):
-        dH = HangDesk(d)
-        for crd in d:
-            dd[crd][dH.index(crd)] += 1
-
-    print(dd)
-
     
 if __name__ == "__main__":
+
     d = GetDesk()
-    abra()
+    dH = HangDesk(d)
+    p = CreatePlayers(4)
+    print(p)
+
     strParam = None
     while strParam != 'exit':
         strParam = input()
-        if strParam == 'abra3': abra3()
+
+        if strParam == 'hang': dH = HangDesk(d); print(dH)
+        if strParam == 'set': SetSet(p); print(p)
