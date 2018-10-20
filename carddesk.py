@@ -124,6 +124,7 @@ if __name__ == "__main__":
     d = GetDesk()
     dH = HangDesk(d)
     p = CreatePlayers(4)
+    Deal(dH, p, 2)
     print(p)
 
     strParam = None
