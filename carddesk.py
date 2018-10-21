@@ -121,6 +121,7 @@ def abra3():
     
 if __name__ == "__main__":
 
+    t = []
     d = GetDesk()
     dH = HangDesk(d)
     p = CreatePlayers(4)
