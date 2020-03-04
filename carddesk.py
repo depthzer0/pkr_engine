@@ -130,6 +130,7 @@ if __name__ == "__main__":
 
     strParam = None
     while strParam != 'exit':
+        
         strParam = input()
 
         if strParam == 'hang': dH = HangDesk(d); print(dH)
