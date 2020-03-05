@@ -1,6 +1,6 @@
 import classes as cl
 
-table = cl.Table(4)
+table = cl.Table(4, 500, 20)
 table.pre_flop()
 print(table)
 

@@ -3,12 +3,15 @@ import random
 
 class Table:
 
-    def __init__(self, amount):
+    def __init__(self, amount, stack, blind):
 
         self.amount = amount
-        self.players = [Player('P' + str(i)) for i in range(1, amount + 1)]
+        self.players = [Player('P' + str(i), stack) for i in range(1, amount + 1)]
         self.desk = Desk()
         self.cards = []
+        self.bank = 0
+        self.blind = blind
+        self.botton = -1
 
     def __str__(self):
 
@@ -24,6 +27,8 @@ class Table:
         return view
 
     def pre_flop(self):
+
+        self.botton = (self.botton + 1) % self.amount
 
         self.desk.hang_desk()
 
@@ -71,10 +76,12 @@ class Desk:
 
 class Player:
 
-    def __init__(self, name):
+    def __init__(self, name, stack):
 
         self.name = name
+        self.stack = stack
         self.hand = []
+        self.rate = 0
 
     def take_card(self, card):
 
