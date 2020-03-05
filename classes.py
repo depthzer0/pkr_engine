@@ -4,8 +4,39 @@ import random
 class Table:
 
     def __init__(self, amount):
-        self.amount = amount
 
+        self.amount = amount
+        self.players = [Player('P' + str(i)) for i in range(1, amount + 1)]
+        self.desk = Desk()
+        self.cards = []
+
+    def __str__(self):
+
+        view = ''
+
+        for p in self.players:
+            view += p.name + ': ' + \
+                ' '.join([self.desk.get_card_name(c) for c in p.hand]) + '\n'
+
+        if self.cards:
+            view += 'cards: ' + ' '.join([self.desk.get_card_name(c) for c in self.cards])
+
+        return view
+
+    def pre_flop(self):
+
+        self.desk.hang_desk()
+
+        for i in range(self.amount * 2):
+            self.players[i % self.amount].take_card(self.desk.deal_card())
+
+    def flop(self):
+
+        self.cards = [self.desk.deal_card() for _ in range(3)]
+
+    def turn_river(self):
+
+        self.cards.append(self.desk.deal_card())
 
 class Desk:
 
@@ -36,3 +67,15 @@ class Desk:
     def deal_card(self):
 
         return self.cards.pop()
+
+
+class Player:
+
+    def __init__(self, name):
+
+        self.name = name
+        self.hand = []
+
+    def take_card(self, card):
+
+        self.hand.append(card)
