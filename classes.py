@@ -6,34 +6,43 @@ class Table:
     def __init__(self, amount, stack, blind):
 
         self.amount = amount
-        self.players = [Player('P' + str(i), stack) for i in range(1, amount + 1)]
+        self.players = [Player('P' + str(i), stack)
+                        for i in range(1, amount + 1)]
         self.desk = Desk()
         self.cards = []
         self.bank = 0
         self.blind = blind
         self.botton = -1
+        self.point = -1
 
     def __str__(self):
 
         view = ''
 
-        for p in self.players:
-            view += p.name + ': ' + \
-                ' '.join([self.desk.get_card_name(c) for c in p.hand]) + '\n'
+        for i, p in enumerate(self.players):
+            view += p.name + [': ', ':*'][i == self.botton] + \
+                ' '.join([self.desk.get_card_name(c) for c in p.hand]) + \
+                '\t' + str(p.rate) + '\n'
 
         if self.cards:
-            view += 'cards: ' + ' '.join([self.desk.get_card_name(c) for c in self.cards])
+            view += 'cards: ' + \
+                ' '.join([self.desk.get_card_name(c) for c in self.cards])
 
         return view
 
     def pre_flop(self):
 
-        self.botton = (self.botton + 1) % self.amount
-
         self.desk.hang_desk()
 
         for i in range(self.amount * 2):
             self.players[i % self.amount].take_card(self.desk.deal_card())
+        
+        self.botton = (self.botton + 1) % self.amount
+
+        for i in range(2):
+            self.players[(self.botton + 1 + i) % self.amount].do_rate(int(self.blind / 2 ** (1 - i)))
+
+        self.point = (self.botton + 3) % self.amount
 
     def flop(self):
 
@@ -42,6 +51,7 @@ class Table:
     def turn_river(self):
 
         self.cards.append(self.desk.deal_card())
+
 
 class Desk:
 
@@ -86,3 +96,8 @@ class Player:
     def take_card(self, card):
 
         self.hand.append(card)
+
+    def do_rate(self, rate):
+
+        self.stack -= rate
+        self.rate += rate
