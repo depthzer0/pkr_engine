@@ -36,11 +36,12 @@ class Table:
 
         for i in range(self.amount * 2):
             self.players[i % self.amount].take_card(self.desk.deal_card())
-        
+
         self.botton = (self.botton + 1) % self.amount
 
         for i in range(2):
-            self.players[(self.botton + 1 + i) % self.amount].do_rate(int(self.blind / 2 ** (1 - i)))
+            self.players[(self.botton + 1 + i) %
+                         self.amount].do_rate(int(self.blind / 2 ** (1 - i)))
 
         self.point = (self.botton + 3) % self.amount
 
@@ -101,3 +102,15 @@ class Player:
 
         self.stack -= rate
         self.rate += rate
+
+
+class Rules:
+
+    def __init__(self):
+
+        self.combinations = ('One', 'Pair', 'TwoPair', 'Set', 'Straight',
+                             'Flush', 'FullHouse', 'Quads', 'StraightFlush', 'Royal')
+
+    def get_sets(self, cards):
+
+        pass
