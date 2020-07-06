@@ -60,7 +60,7 @@ class Desk:
 
         self.suits = ('C', 'D', 'P', 'H')
         self.ranks = ('2', '3', '4', '5', '6', '7', '8',
-                      '9', '10', 'V', 'Q', 'K', 'A')
+                      '9', 'T', 'J', 'Q', 'K', 'A')
 
         self.cards = [(s, r) for s in range(len(self.suits))
                       for r in range(len(self.ranks))]
@@ -89,10 +89,10 @@ class Player:
 
     def __init__(self, name, stack):
 
-        self.name = name
-        self.stack = stack
-        self.hand = []
-        self.rate = 0
+        self.name = name # Players name
+        self.stack = stack # money
+        self.hand = [] # cards
+        self.rate = 0 # bet
 
     def take_card(self, card):
 
@@ -108,8 +108,8 @@ class Rules:
 
     def __init__(self):
 
-        self.combinations = ('One', 'Pair', 'TwoPair', 'Set', 'Straight',
-                             'Flush', 'FullHouse', 'Quads', 'StraightFlush', 'Royal')
+        self.combinations = ('HighHand', 'OnePair', 'TwoPairs', 'ThreeKind', 'Straight',
+                             'Flush', 'FullHouse', 'FourKind', 'StraightFlush', 'RoyalFlush')
 
     def get_sets(self, cards):
 
