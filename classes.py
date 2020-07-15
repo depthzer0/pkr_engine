@@ -46,10 +46,12 @@ class Table:
             self.players[i % self.amount].take_card(self.desk.deal_card())
 
         for i in range(self.amount):
+            self.players[i].hand.sort(key=lambda i: i[1])
+
             self.players[i].high_hand = self.desk.get_high_card(
                 self.players[i].hand)
             self.players[i].set, self.players[i].sets_content = self.rules.get_sets(
-                self.players[i].hand)
+                self.players[i].hand, self.cards)
 
         self.botton = (self.botton + 1) % self.amount
 
@@ -65,7 +67,7 @@ class Table:
 
         for i in range(self.amount):
             self.players[i].set, self.players[i].sets_content = self.rules.get_sets(
-                self.players[i].hand + self.cards)
+                self.players[i].hand, self.cards)
 
     def turn_river(self):
 
@@ -73,7 +75,7 @@ class Table:
 
         for i in range(self.amount):
             self.players[i].set, self.players[i].sets_content = self.rules.get_sets(
-                self.players[i].hand + self.cards)
+                self.players[i].hand, self.cards)
 
 
 class Desk:
@@ -125,7 +127,7 @@ class Player:
         self.rate = 0  # bet
         self.high_hand = -1
         self.set = -1
-        self.sets_content = set()
+        self.sets_content = []
 
     def take_card(self, card):
 
@@ -144,7 +146,9 @@ class Rules:
         self.combinations = ('HighHand', 'OnePair', 'TwoPairs', 'ThreeKind', 'Straight',
                              'Flush', 'FullHouse', 'FourKind', 'StraightFlush', 'RoyalFlush')
 
-    def get_sets(self, cards):
+    def get_sets(self, hand, board):
+
+        cards = hand + board
 
         sets_kind = 0
         sets_content = []
@@ -163,18 +167,21 @@ class Rules:
 
             diff = -1
             if straight:
-                diff = straight[-1][1] - card[1]
-            if diff > 1:
+                diff = card[1] - straight[-1][1]
+            if diff > 1 and len(straight) < 5:
                 straight.clear()
+                straight.append(card)
             elif diff in (-1, 1):
                 straight.append(card)
-
+        
         flush_items = sorted(flush, key=lambda x: len(flush[x]), reverse=True)
         kind_items = sorted(kind, key=lambda x: len(kind[x]), reverse=True)
 
         max_flush = flush[flush_items[0]]
         kind_one = kind[kind_items[0]]
         kind_two = kind[kind_items[1]]
+
+        straight_flush = sorted(list(set(straight)&set(max_flush)), key=lambda i: i[1])
 
         # 'RoyalFlush'
         if len(straight) >= 5 and len(max_flush) >= 5 and straight[-1][1] == 12:
@@ -189,18 +196,17 @@ class Rules:
             sets_kind = 7
             sets_content = kind_one
         # 'FullHouse'
-        # здесь проверить сортировку по рангу, т.к. может попадать младшая пара, а должна старшая
         elif len(kind_one) == 3 and len(kind_two) == 2:
             sets_kind = 6
             sets_content = kind_one + kind_two
         # 'Flush'
         elif len(max_flush) >= 5:
             sets_kind = 5
-            sets_content = max_flush
+            sets_content = max_flush[-5:]
         # 'Straight'
         elif len(straight) >= 5:
             sets_kind = 4
-            sets_content = straight
+            sets_content = straight[-5:]
         # 'ThreeKind'
         elif len(kind_one) == 3:
             sets_kind = 3
@@ -215,7 +221,7 @@ class Rules:
             sets_content = kind_one
         # 'HighHand'
         elif len(kind_one) == 1:
-            sets_content = kind_one
+            sets_content = hand[-1:]
 
         sets_content.sort()  # sort by suit
         sets_content.sort(key=lambda i: i[1])  # sort by rank
