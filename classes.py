@@ -29,8 +29,8 @@ class Table:
             view += p.name + [': ', ':*'][i == self.botton] + \
                 ' '.join([self.desk.get_card_name(c) for c in p.hand]) + \
                 '\t' + str(p.rate) + '\t' + self.desk.ranks[p.high_hand] + \
-                '\t' + self.rules.combinations[p.set] + \
-                '\t\t' + ' '.join([self.desk.get_card_name(c) for c in p.sets_content]) + '\n'
+                '\t' + f'{self.rules.combinations[p.set]:13}' + \
+                '\t' + ' '.join([self.desk.get_card_name(c) for c in p.sets_content]) + '\n'
 
         if self.cards:
             view += 'cards: ' + \
@@ -168,6 +168,7 @@ class Rules:
             diff = -1
             if straight:
                 diff = card[1] - straight[-1][1]
+
             if diff > 1 and len(straight) < 5:
                 straight.clear()
                 straight.append(card)
@@ -182,13 +183,18 @@ class Rules:
         kind_two = kind[kind_items[1]]
 
         straight_flush = sorted(list(set(straight)&set(max_flush)), key=lambda i: i[1])
+        if len(straight_flush) >= 5:
+            for i in range(1, len(straight_flush)):
+                if straight_flush[i][1] - straight_flush[i - 1][1] != 1:
+                    straight_flush.clear()
+                    break
 
         # 'RoyalFlush'
-        if len(straight) >= 5 and len(max_flush) >= 5 and straight[-1][1] == 12:
+        if len(straight_flush) >= 5 and straight[-1][1] == 12:
             sets_kind = 9
             sets_content = straight
         # 'StraightFlush'
-        elif len(straight) >= 5 and len(max_flush) >= 5:
+        elif len(straight_flush) >= 5:
             sets_kind = 8
             sets_content = straight
         # 'FourKind'
