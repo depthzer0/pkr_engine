@@ -2,4 +2,4 @@ import classes as cl
 
 rules = cl.Rules()
 
-print(rules.get_sets([(1, 4), (1, 8)], [(2, 4), (1, 6), (1, 5), (1, 7), (1, 3)]))
+print(rules.get_sets([(0, 0), (0, 8)], [(0, 9), (0, 10), (0, 11), (2, 1), (0, 12)]))

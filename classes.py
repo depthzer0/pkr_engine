@@ -170,8 +170,11 @@ class Rules:
                 diff = card[1] - straight[-1][1]
 
             if diff > 1 and len(straight) < 5:
-                straight.clear()
-                straight.append(card)
+                if len(straight) == 4 and straight[0][1] == 0 and cards[-1][1] == 12: # A2345
+                    straight.append(cards[-1])
+                else:
+                    straight.clear()
+                    straight.append(card)
             elif diff in (-1, 1):
                 straight.append(card)
         
@@ -185,12 +188,12 @@ class Rules:
         straight_flush = sorted(list(set(straight)&set(max_flush)), key=lambda i: i[1])
         if len(straight_flush) >= 5:
             for i in range(1, len(straight_flush)):
-                if straight_flush[i][1] - straight_flush[i - 1][1] != 1:
+                if straight_flush[i][1] - straight_flush[i - 1][1] != 1 and straight_flush[0][1] != 0 and straight_flush[-1][1] != 12:
                     straight_flush.clear()
                     break
 
         # 'RoyalFlush'
-        if len(straight_flush) >= 5 and straight[-1][1] == 12:
+        if len(straight_flush) >= 5 and straight[0][1] == 8 and straight[-1][1] == 12:
             sets_kind = 9
             sets_content = straight
         # 'StraightFlush'
